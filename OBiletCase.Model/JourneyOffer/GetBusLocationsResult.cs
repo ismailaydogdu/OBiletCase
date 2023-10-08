@@ -17,7 +17,7 @@ namespace OBiletCase.Model.JourneyOffer
         public string? UserMessage { get; set; }
 
         [JsonProperty("api-request-id")]
-        public int ApiRequestId { get; set; }
+        public int? ApiRequestId { get; set; }
 
         [JsonProperty("controller")]
         public string? Controller { get; set; }

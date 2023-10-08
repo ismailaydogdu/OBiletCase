@@ -15,31 +15,31 @@ namespace OBiletCase.UI.Controllers
         public HomeController(ILogger<HomeController> logger, IJourneyOfferClient oBiletClient)
         {
             _logger = logger;
-            _oBiletClient = oBiletClient;        
+            _oBiletClient = oBiletClient;
         }
+
 
         public async Task<IActionResult> Index()
         {
-            //TODO: Buraya gerçekten bir ip al !!!!!!!!!!!!!!!
-            var clientIp = "159.146.41.195";
 
-            CancellationToken cancellationToken = CancellationToken.None;
-            if (string.IsNullOrEmpty(_sessionId))
-            {
-                var sessionResult = await _oBiletClient.GetSession(clientIp!, cancellationToken);
-                if (sessionResult != null && sessionResult.Status == "Success")
-                {
-                    _sessionId = sessionResult!.Data!.SessionId!;
-                    _deviceId = sessionResult!.Data!.DeviceId!;
-                }
-            }
-            var result = await _oBiletClient.GetBusLocations(_sessionId, _deviceId, cancellationToken);
-            return View(result);
+            return View();
         }
 
-        public IActionResult Privacy()
+        [HttpPost]
+        public async Task<IActionResult> Expeditions(int originId, int destinationId, DateTime departureDate)
         {
+            CancellationToken cancellationToken = CancellationToken.None;
+            var getJourneysResult = await _oBiletClient.GetJourneys(originId, destinationId, departureDate, cancellationToken);
             return View();
+        }
+
+        [Route("get-bus-locations-list")]
+        public async Task<IActionResult> BusLocationsList(string term)
+        {
+            CancellationToken cancellationToken = CancellationToken.None;
+            var result = await _oBiletClient.GetBusLocations(term,cancellationToken);
+            var returnData = result.Data.Select(s => new { id = s.Id, text = s.Name });
+            return Json(returnData);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

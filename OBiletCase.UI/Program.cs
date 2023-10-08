@@ -5,9 +5,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddHttpClient();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddTransient<IJourneyOfferClient, OBiletClient>();
+builder.Services.AddScoped<IJourneyOfferClient, OBiletClient>();
+
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Oturum zaman aþýmý süresini ayarlayýn
+    options.Cookie.HttpOnly = true;
+});
 
 var app = builder.Build();
 
@@ -23,7 +32,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseSession();
 app.UseAuthorization();
 
 app.MapControllerRoute(
