@@ -5,43 +5,49 @@
 
 <div class="container">
     <div class="card mt-5">
-    
 
-            <div class="container row p-5">
-                <form action="@Url.Action("Expeditions","Home")" method="post">
 
-                    <div class="col-md-6">
-                        <select name="originId" id="origin-list" class="form-control">
-                           
-                        </select>
+        <div class="container row p-5">
+            <form action="@Url.Action("Expeditions","Home")" method="post">
 
-                    </div>
-                    <div class="col-md-6">
-                        <select name="destinationId" id="destination-list" class="form-control">
-                          
-                        </select>
-                    </div>
+                <div class="col-md-6">
+                    <select name="originId" id="origin-list" class="form-control">
+                        @if (Model.LastOrigin != null)
+                        {
+                            <option value="@Model.LastOrigin.id" selected>@Model.LastOrigin.text</option>
+                        }
+                    </select>
 
-                    <div class="col-md-6 mt-2">
-                        <div class="row">
-                            <div class="col-md-8">
+                </div>
+                <div class="col-md-6">
+                    <select name="destinationId" id="destination-list" class="form-control">
+                        @if (Model.LastDestination != null)
+                        {
+                            <option value="@Model.LastDestination.id" selected>@Model.LastDestination.text</option>
+                        }
+                    </select>
+                </div>
 
-                                <input type="date" name="departureDate" id="dateInput" class="form-control">
-                            </div>
-                            <div class="col-md-4">
+                <div class="col-md-6 mt-2">
+                    <div class="row">
+                        <div class="col-md-8">
 
-                                <button type="button" id="todayButton" class="btn btn-block btn-dark">Bugün</button>
-                                <button type="button" id="tomorrowButton" class="btn btn-block btn-dark">Yarın</button>
-                            </div>
+                            <input type="date" name="departureDate" id="dateInput" class="form-control">
                         </div>
+                        <div class="col-md-4">
 
+                            <button type="button" id="todayButton" class="btn btn-block btn-dark">Bugün</button>
+                            <button type="button" id="tomorrowButton" class="btn btn-block btn-dark">Yarın</button>
+                        </div>
                     </div>
-                    <div class="col-md-6 mt-2">
-                        <button type="submit" class="btn btn-block btn-primary">Bileti Bul</button>
-                    </div>
-                </form>
-            </div>
-        
+
+                </div>
+                <div class="col-md-6 mt-2">
+                    <button type="submit" class="btn btn-block btn-primary">Bileti Bul</button>
+                </div>
+            </form>
+        </div>
+
     </div>
 </div>
 
