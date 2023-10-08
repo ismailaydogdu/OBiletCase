@@ -75,7 +75,11 @@ namespace OBiletCase.Service.OBilet
             if (data.Status == "DeviceSessionError")
             {
                 var sessionData = await GetSession(cancellationToken);
-                return await GetBusLocations(searchText, cancellationToken);
+                if (sessionData != null)
+                {
+                    return await GetBusLocations(searchText, cancellationToken);
+                }
+                return null;
             }
             return data;
         }
@@ -132,15 +136,19 @@ namespace OBiletCase.Service.OBilet
             return await response.ReadJsonToAsync<GetJourneysResult>(cancellationToken);
         }
 
-        public async Task<GetSessionResult> GetSession(CancellationToken cancellationToken)
+        private async Task<GetSessionResult> GetSession(CancellationToken cancellationToken)
         {
+#if DEBUG
+            var clientIp = "159.146.43.181";
+#else
             var clientIp = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+#endif
             var client = _httpClientFactory.CreateClient();
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", _apiClientToken);
             client.BaseAddress = new Uri(_baseUrl);
             GetSessionRequest request = new GetSessionRequest()
             {
-                Type = 2,
+                Type = 1,
                 Connection = new Connection() { IpAddress = clientIp },
                 Application = new Application()
                 {

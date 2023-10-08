@@ -8,7 +8,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<IJourneyOfferClient, OBiletClient>();
+builder.Services.AddTransient<IJourneyOfferClient, OBiletClient>();
 
 
 builder.Services.AddDistributedMemoryCache();
