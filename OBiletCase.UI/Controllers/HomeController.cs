@@ -30,14 +30,30 @@ namespace OBiletCase.UI.Controllers
             return View(viewModel);
         }
 
-        [HttpPost]
+        [Route("kesifler")]
+        [HttpGet]
         public async Task<IActionResult> Expeditions(int originId, int destinationId, string originName, string destinationName, DateTime departureDate)
         {
-            CancellationToken cancellationToken = CancellationToken.None;
-            var getJourneysResult = await _oBiletClient.GetJourneys(originId, destinationId, departureDate, cancellationToken);
             CookieHelper.SetCookie(HttpContext, "lastOrigin", new SelectBoxModel() { id = originId.ToString(), text = originName });
             CookieHelper.SetCookie(HttpContext, "lastDestination", new SelectBoxModel() { id = originId.ToString(), text = originName });
-            return View();
+            ExpeditionsViewModel viewModel = new ExpeditionsViewModel();
+            CancellationToken cancellationToken = CancellationToken.None;
+            var getJourneysResult = await _oBiletClient.GetJourneys(originId, destinationId, departureDate, cancellationToken);
+            if (getJourneysResult != null && getJourneysResult.Status.ToLower() == "success")
+            {
+                viewModel.IsSuccess = true;
+                getJourneysResult.Data = getJourneysResult.Data;
+                return View(viewModel);
+            }
+            else if (getJourneysResult != null)
+            {
+                viewModel.IsSuccess = false;
+                viewModel.ErrorMessage = "Servis hatası => " + getJourneysResult.Message;
+                return View(viewModel);
+            }
+            viewModel.IsSuccess = false;
+            viewModel.ErrorMessage = "Bilinmeyen bir hata meydana geldi lütfen bizimle iletişime geçiniz";
+            return View(viewModel);
         }
 
         [Route("get-bus-locations-list")]

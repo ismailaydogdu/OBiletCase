@@ -8,7 +8,7 @@
 
 
         <div class="container row p-5">
-            <form action="@Url.Action("Expeditions","Home")" method="post">
+            <form action="@Url.Action("Expeditions","Home")" id="get-journeys-form" method="post">
 
                 <div class="col-md-6">
                     <select name="originId" id="origin-list" class="form-control">
@@ -112,5 +112,26 @@
             },
             minimumInputLength: 1 // Minimum karakter sayısı için ayarlayabilirsiniz
         });
+
+        $('#get-journeys-form').submit(function (event) {
+            debugger;
+            var selectOrigin = $('#origin-list');
+            var selectOriginVal = selectOrigin.val();
+            var selectOriginText = selectOrigin.find('option:selected').text();
+
+            var selectDestination = $('#destination-list');
+            var dateInput = $('#dateInput');
+            var selectDestinationVal = selectDestination.val();
+            var selectDestinationText = selectDestination.find('option:selected').text();
+            if (selectOriginVal == selectDestinationVal) {
+                alert("Kalkış noktası varış noktası ile aynı olamaz!");
+                return false;
+            }
+            var dateValue = dateInput.val();
+            window.location.href = `/kesifler?originId=${selectOriginVal}&destinationId=${selectDestinationVal}&originName=${selectOriginText}&destinationName=${selectDestinationText}&departureDate=${dateValue}`;
+        });
     });
+
+
+
 </script>
