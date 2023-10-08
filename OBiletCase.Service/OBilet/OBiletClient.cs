@@ -21,8 +21,8 @@ namespace OBiletCase.Service.OBilet
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
-            _apiClientToken = configuration["OBilet:ApiClientToken"];
-            _baseUrl = configuration["OBiletServiceEndpoints:BaseUrl"];
+            _apiClientToken = configuration["OBilet:ApiClientToken"]; //User Secret fileden gelir 
+            _baseUrl = configuration["OBiletServiceEndpoints:BaseUrl"]; // Appsettings OBilet Base url
         }
 
 
@@ -139,7 +139,7 @@ namespace OBiletCase.Service.OBilet
         private async Task<GetSessionResult> GetSession(CancellationToken cancellationToken)
         {
 #if DEBUG
-            var clientIp = "159.146.43.181";
+            var clientIp = "159.146.43.181"; //Localde alınan ipde sıkıntı olduğu için debug modda manuel olarak eklemek için bu şekilde bırakılmıştır
 #else
             var clientIp = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
 #endif
@@ -159,14 +159,14 @@ namespace OBiletCase.Service.OBilet
 
             var url = _configuration["OBiletServiceEndpoints:GetSession"];
             var response = await client.PostAsync(url, new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json"), cancellationToken);
-            if (!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode) //429 hatası sonucu default veri kullanımı için
             {
                 _httpContextAccessor.HttpContext.Session.Set("sessionId", Encoding.ASCII.GetBytes("PqtdftjloK3Kpka97+ILDzMa6D9740nggLiTzXiLlzA="));
                 _httpContextAccessor.HttpContext.Session.Set("deviceId", Encoding.ASCII.GetBytes("PqtdftjloK3Kpka97+ILDzMa6D9740nggLiTzXiLlzA="));
                 return new GetSessionResult() { Data = new Data() { SessionId = "PqtdftjloK3Kpka97+ILDzMa6D9740nggLiTzXiLlzA=", DeviceId = "PqtdftjloK3Kpka97+ILDzMa6D9740nggLiTzXiLlzA=" } };
             }
             var data = await response.ReadJsonToAsync<GetSessionResult>(cancellationToken);
-#if DEBUG
+#if DEBUG //429 hatası sonucu default veri kullanımı için
             _httpContextAccessor.HttpContext.Session.Set("sessionId", Encoding.ASCII.GetBytes("PqtdftjloK3Kpka97+ILDzMa6D9740nggLiTzXiLlzA="));
             _httpContextAccessor.HttpContext.Session.Set("deviceId", Encoding.ASCII.GetBytes("PqtdftjloK3Kpka97+ILDzMa6D9740nggLiTzXiLlzA="));
 #else
